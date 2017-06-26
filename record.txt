@@ -1,0 +1,23 @@
+select min(minX) from chicagor;
+36.6194458007812
+
+select min(maxX) from chicagor;
+36.6194496154785
+
+select max(minX) from chicagor;
+42.0229034423828
+
+select max(maxX) from chicagor;
+42.0229110717773
+
+select min(minY) from chicagor;
+-91.6865692138672
+
+select min(maxY) from chicagor;
+-91.6865539550781
+
+select max(minY) from chicagor;
+-87.5245361328125
+
+select max(maxY) from chicagor;
+-87.5245208740234
