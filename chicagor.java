@@ -75,11 +75,26 @@ public class chicagor {
         select max(maxY) from chicagor;
         -87.5245208740234
     */
+    double length;
+    double width;
+    double bucketlen;
+    double bucketwid;
+    double xdiff;
+    double ydiff;
+    double xbound;
+    double ybound;
+    String sqlminX;
+    String sqlmaxX;
+    String sqlminY;
+    String sqlmaxY;
+    String sql;
+    String where;
     public void mapRange(){
-        String sqlminX = "select min(minX) from chicagor;";
-        String sqlmaxX = "select max(maxX) from chicagor;";
-        String sqlminY = "select min(minY) from chicagor;";
-        String sqlmaxY = "select max(maxY) from chicagor;";
+        sqlminX = "select min(minX) from chicagor;";
+        sqlmaxX = "select max(maxX) from chicagor;";
+        sqlminY = "select min(minY) from chicagor;";
+        sqlmaxY = "select max(maxY) from chicagor;";
+        
        // String query = "select " + sql + " from chicagor";
         try (Connection conn = this.connect();
              //Statement stat  = conn.createStatement();
@@ -94,7 +109,7 @@ public class chicagor {
              ResultSet maxY  = max2.executeQuery(sqlmaxY)){
            // System.out.println("lowerleft corner is " + rs.getDouble(sql));
              //loop through the result set
-            System.out.println("minX is " + minX.getDouble("min(minX)") + "\n" +
+            /*System.out.println("minX is " + minX.getDouble("min(minX)") + "\n" +
                                "minY is " + minY.getDouble("min(minY)") + "\n" +
                                "maxX is " + maxX.getDouble("max(maxX)") + "\n" +
                                "maxY is " + maxY.getDouble("max(maxY)"));
@@ -110,13 +125,30 @@ public class chicagor {
             double [] upl = {minX.getDouble("min(minX)"), maxY.getDouble("max(maxY)")};
             double [] upr = {maxX.getDouble("max(maxX)"), maxY.getDouble("max(maxY)")};*/
             //System.out.println(lowel[0]+ "\n" + lowel[1]);
-            double length = maxX.getDouble("max(maxX)") - minX.getDouble("min(minX)");
-            double width = maxY.getDouble("max(maxY)") - minY.getDouble("min(minY)");
-            double bucketlen = length/100;
-            double bucketwid = width/100;
-            
+            xbound = minX.getDouble("min(minX)");
+            ybound = minY.getDouble("min(minY)");
+            length = maxX.getDouble("max(maxX)") - minX.getDouble("min(minX)");
+            width = maxY.getDouble("max(maxY)") - minY.getDouble("min(minY)");
+            bucketlen = length/100;
+            bucketwid = width/100;
+            xdiff = bucketlen/10;
+            ydiff = bucketwid/10;
+            //System.out.println(bucketlen + "\n" + bucketwid);
         } catch (SQLException e) {
             System.out.println(e.getMessage());
+        }
+        for (int i = 0; i < 100; i++){
+            sql = "select count(*) from chicagor ";
+            where = "where maxX < " + (xbound + bucketlen + (i * xdiff)) + " and maxY < " + (ybound + bucketwid + (i * ydiff))
+                    + " and minX > " + (xbound + (i * xdiff)) + " and minY > " + (ybound + (i * ydiff));
+        
+            try (Connection conn2 = this.connect();
+                 Statement bucket = conn2.createStatement();
+                 ResultSet num = bucket.executeQuery(sql + where)){
+                    System.out.println("bucket " + i + " has  " + num.getDouble("count(*)"));
+            } catch (SQLException e2){
+                    System.out.println(e2.getMessage());
+            }
         }
     }
 
